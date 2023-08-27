@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from pymongo import MongoClient
 import pandas as pd
@@ -72,7 +72,7 @@ def fetch_mongodb_data():
     eve_hot_score = pd.DataFrame(eve_hot_score)
     return eve_hot_score
 
-with DAG('mongo_fetch_dag', default_args=default_args, schedule_interval=timedelta(days=1)) as dag:
+with DAG('eve_hot_score', default_args=default_args, schedule_interval=timedelta(days=1)) as dag:
     fetch_task = PythonOperator(
         task_id='fetch_mongodb_data_task',
         python_callable=fetch_mongodb_data,
