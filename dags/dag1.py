@@ -130,7 +130,7 @@ def process_data(**kwargs):
     print(grouped_data.head())
     print(engager_score_content_team_df.head())
 
-dag = DAG('eve_hot_engager_score', default_args=default_args, schedule_interval=None)
+dag = DAG('dag1', default_args=default_args, schedule_interval=None)
 
 connect_task = PythonOperator(
     task_id='connect_mongodb',
