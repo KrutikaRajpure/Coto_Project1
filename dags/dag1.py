@@ -12,7 +12,8 @@ default_args = {
 
 def connect_mongodb():
     client = MongoClient("mongodb+srv://qa_user:E8b528lsiWSApMam@coto-qa-mongodb.xyujs.mongodb.net/?retryWrites=true&w=majority", 27017, tls=True, tlsAllowInvalidCertificates=True)
-    return client
+    database = client['media_data']
+    return database
 
 def execute_pipeline1(**kwargs):
     client = connect_mongodb()
