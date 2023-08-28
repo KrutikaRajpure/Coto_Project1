@@ -14,7 +14,7 @@ def connect_mongodb():
     client = MongoClient("mongodb+srv://qa_user:E8b528lsiWSApMam@coto-qa-mongodb.xyujs.mongodb.net/?retryWrites=true&w=majority", 27017, tls=True, tlsAllowInvalidCertificates=True)
     return client
 
-def execute_pipeline1():
+def execute_pipeline1(**kwargs):
     client = connect_mongodb()
     pipeline1 = [
         {
@@ -64,9 +64,9 @@ def execute_pipeline1():
     }
     ] 
     eve_hot_score = list(client['media_data']['contents'].aggregate(pipeline1))
-    return pd.DataFrame(eve_hot_score)
+    kwargs['ti'].xcom_push(key='pipeline1_result', value=eve_hot_score)
 
-def execute_pipeline2():
+def execute_pipeline2(**kwargs):
     client = connect_mongodb()
     pipeline2 = [
         {
@@ -111,7 +111,8 @@ def execute_pipeline2():
     }
         ]  # Your pipeline2 definition
     engager_score_content_team = list(client['media_data']['30_days_engager_score'].aggregate(pipeline2))
-    return pd.DataFrame(engager_score_content_team)
+    kwargs['ti'].xcom_push(key='pipeline2_result', value=engager_score_content_team)
+
 
 def process_data(**kwargs):
     ti = kwargs['ti']
@@ -123,8 +124,6 @@ def process_data(**kwargs):
         'total_comments': 'sum',
         'total_shares': 'sum'
     }).reset_index()
-
-    # Perform further processing as needed
     
     # Example: Print the grouped data
     print(grouped_data.head())
@@ -135,18 +134,21 @@ dag = DAG('dag1', default_args=default_args, schedule_interval=None)
 connect_task = PythonOperator(
     task_id='connect_mongodb',
     python_callable=connect_mongodb,
+    provide_context=True,
     dag=dag,
 )
 
 pipeline1_task = PythonOperator(
     task_id='execute_pipeline1',
     python_callable=execute_pipeline1,
+    provide_context=True,
     dag=dag,
 )
 
 pipeline2_task = PythonOperator(
     task_id='execute_pipeline2',
     python_callable=execute_pipeline2,
+    provide_context=True,
     dag=dag,
 )
 
