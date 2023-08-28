@@ -17,7 +17,7 @@ dag = DAG(
     catchup=False,
 )
 
-def process_media_data():
+def feature_user_data():
     # Your provided Python code here
     from pymongo import MongoClient
     import pandas as pd
@@ -84,8 +84,8 @@ def process_media_data():
 
 # Define tasks
 task_process_media_data = PythonOperator(
-    task_id='process_media_data',
-    python_callable=process_media_data,
+    task_id='feature_user_data',
+    python_callable=feature_user_data,
     dag=dag,
 )
 
